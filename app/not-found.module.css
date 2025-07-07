@@ -1,0 +1,27 @@
+/* 404.module.css */
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f7f9fc;
+    text-align: center;
+    padding: 2rem;
+    color: #2d3748;
+  }
+  
+  .title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #e53e3e; /* Красный для привлечения внимания */
+  }
+  
+  .description {
+    font-size: 1.25rem;
+    color: #4a5568;
+    max-width: 500px;
+  }
+  

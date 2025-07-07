@@ -33,8 +33,12 @@ const NoteForm = ({ onSuccess }: NoteFormProps) => {
       initialValues={{ title: "", content: "", tag: "Todo" as NoteTag }}
       validationSchema={NoteSchema}
       onSubmit={(values, { setSubmitting }) => {
-        mutation.mutate(values);
-        setSubmitting(false);
+        mutation.mutate(values, {
+          onSettled: () => {
+            setSubmitting(false);
+          }
+        })
+        
       }}
     >
       {({ isSubmitting }) => (
