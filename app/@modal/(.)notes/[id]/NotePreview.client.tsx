@@ -3,24 +3,27 @@
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNoteById } from '../../../../lib/api';
-import type { Note } from '../../../../types/note';
+import Modal from '../../../../components/Modal/Modal';
 import css from './NotePreview.module.css';
+import type { Note } from '../../../../types/note';
+import { useParams } from "next/navigation";
 
-interface NotePreviewProps {
-  noteId: number;
-}
 
-export default function NotePreview({ noteId }: NotePreviewProps) {
+export default function NotePreviewClient() {
+    const params = useParams<{ id: string }>();
+    const id = params?.id;
   const router = useRouter();
 
+  const idNum = Number(id);
   const {
     data: note,
     isLoading,
     isError,
   } = useQuery<Note>({
-    queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(noteId),
-    enabled: !Number.isNaN(noteId),
+    queryKey: ['note', id],
+    queryFn: () => fetchNoteById(idNum),
+    enabled: !Number.isNaN(id),
+    refetchOnWindowFocus: false,
   });
 
   const handleClose = () => {
@@ -28,21 +31,25 @@ export default function NotePreview({ noteId }: NotePreviewProps) {
   };
 
   if (isLoading) return <p>Loading note...</p>;
-  if (isError || !note) return <p>Error loading note.</p>;
+  if (isError || !note) return <p>Failed to load note.</p>;
 
   return (
-    <div className={css.container}>
-      <button className={css.backBtn} onClick={handleClose}>
-        Back
-      </button>
-      <div className={css.item}>
-        <div className={css.header}>
-          <h2>{note.title}</h2>
-          <span className={css.tag}>{note.tag}</span>
+    <Modal onClose={handleClose}>
+      <div className={css.container}>
+        <button className={css.backBtn} onClick={handleClose}>
+          Back
+        </button>
+        <div className={css.item}>
+          <div className={css.header}>
+            <h2>{note.title}</h2>
+            <span className={css.tag}>{note.tag}</span>
+          </div>
+          <p className={css.content}>{note.content}</p>
+          <p className={css.date}>
+            {new Date(note.createdAt).toLocaleString()}
+          </p>
         </div>
-        <p className={css.content}>{note.content}</p>
-        <p className={css.date}>{new Date(note.createdAt).toLocaleString()}</p>
       </div>
-    </div>
+    </Modal>
   );
 }
