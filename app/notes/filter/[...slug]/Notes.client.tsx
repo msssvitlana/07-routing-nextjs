@@ -32,8 +32,9 @@ export default function NotesClient({ notesData, tag }: NotesClientProps) {
     refetch,
     isSuccess,
   } = useQuery({
-    queryKey: ['Notes', debouncedQuery, currentPage],
-    queryFn: () => fetchNotes(debouncedQuery, currentPage),
+    queryKey: ['Notes', debouncedQuery, currentPage, tag],
+queryFn: () => fetchNotes(debouncedQuery, currentPage, tag),
+
     placeholderData: keepPreviousData,
     initialData: currentPage === 1 && query === '' ? notesData : undefined,
   });
@@ -46,11 +47,8 @@ export default function NotesClient({ notesData, tag }: NotesClientProps) {
     setCurrentPage(1);
   };
 
-  //  Фільтрація по тегу на клієнті
-  const filteredNotes = tag
-    ? data?.notes.filter((note) => note.tag.toLowerCase() === tag.toLowerCase())
-    : data?.notes;
 
+  console.log({ data, isLoading, isError, error })
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
@@ -74,11 +72,9 @@ export default function NotesClient({ notesData, tag }: NotesClientProps) {
         </p>
       )}
 
-      {isSuccess && filteredNotes && filteredNotes.length > 0 && (
-        <NoteList notes={filteredNotes} />
-      )}
+        {data && <NoteList notes={data.notes} />}
 
-      {isSuccess && filteredNotes?.length === 0 && (
+      {isSuccess && data.notes?.length === 0 && (
         <p className={css.loaderror}>No notes found for tag `${tag}`</p>
       )}
 

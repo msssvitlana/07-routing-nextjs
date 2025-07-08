@@ -10,12 +10,12 @@ const Header = () => {
       </Link>
       <nav aria-label='Main Navigation'>
         <ul className={css.navigation}>
-          <li><TagsMenu /></li> 
-          <li>
-            <Link href='/profile'>Profile</Link>
+          <li className={css.navigationLink}><TagsMenu /></li> 
+          <li className={css.menuItem}>
+            <Link className={css.navigationLink} href='/profile'>Profile</Link>
           </li>
-          <li>
-            <Link href='/about'>About</Link>
+          <li className={css.menuItem}>
+            <Link className={css.navigationLink} href='/about'>About</Link>
           </li>
         </ul>
       </nav>

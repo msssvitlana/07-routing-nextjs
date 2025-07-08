@@ -5,7 +5,8 @@ import styles from './Modal.module.css';
 import { useEffect, useCallback } from 'react';
 type Props = {
   children: React.ReactNode;
-  onClose?: () => void; // ✅ додаємо підтримку кастомного закриття
+  onClose?: () => void; 
+  
 };
 
 const Modal = ({ children, onClose }: Props) => {

@@ -3,8 +3,7 @@
 import axios from "axios";
 import type { Note, NewNoteData} from '../types/note'
 
-export const TAGS = ["Todo", "Work", "Personal", "Meeting", "Shopping"] as const;
-export type Tag = typeof TAGS[number];
+
 
 axios.defaults.baseURL = "https://notehub-public.goit.study/api";
 const NOTES_PER_PAGE = 12;
@@ -25,32 +24,36 @@ axios.interceptors.request.use((config) => {
 
 // Універсальна функція для отримання нотаток
 export async function fetchNotes(
-  query: string = '',
-  page: number = 1,
+  query: string ,
+  page: number,
   tag?: string
 ): Promise<NoteListResponse> {
   try {
-    const params: Record<string, string | number> = {
+    const params: Record<string, string | number> ={
       page,
       perPage: NOTES_PER_PAGE,
+      ...(query.trim() && { search: query.trim() }),
     };
 
-    if (query.trim()) {
-      params.search = query.trim();
-    }
+   
 
     if (tag && tag !== 'All') {
-      params.tag = tag; //  ключ згідно API
+      params.tag = tag;
     }
 
+    
+    console.log('Fetch params:', { query, page, tag });
+
     const response = await axios.get<NoteListResponse>("/notes", { params });
+    console.log(">>> response.data:", response.data);
+
     return response.data;
+
   } catch (error) {
     console.error("Failed to fetch notes:", error);
     throw new Error("Failed to fetch notes. Please try again later.");
   }
 }
-
 
 export async function removeNote(id: number): Promise<Note> {
   try {
