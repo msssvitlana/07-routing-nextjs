@@ -1,29 +1,40 @@
-// app/@modal/(.)notes/[id]/page.tsx
+'use client';
 
+import { useRouter, useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import Modal from '../../../../components/Modal/Modal';
+import NotePreview from './NotePreview.client';  
 import { fetchNoteById } from '../../../../lib/api';
 import type { Note } from '../../../../types/note';
-import Modal from '../../../../components/Modal/Modal';
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
+export default function NoteModalPage() {
+  const router = useRouter();
+  const { id } = useParams();
 
-const NotePreview = async ({ params }: Props) => {
-  const { id } = await params; 
+  const noteId = Number(id);
 
-  const idNum = Number(id);
-  if (!id || isNaN(idNum)) {
-    return <p>Invalid note ID</p>;
-  }
+  const {
+    data: note,
+    isLoading,
+    isError,
+  } = useQuery<Note>({
+    queryKey: ['notes', noteId],
+    queryFn: () => fetchNoteById(noteId),
+    enabled: !Number.isNaN(noteId),
+    refetchOnWindowFocus: false,
+  });
 
-  const note: Note = await fetchNoteById(idNum);
+  const handleClose = () => {
+    router.back();
+  };
+
+  if (!id || Number.isNaN(noteId)) return <p>Invalid ID</p>;
+  if (isLoading) return <p>Loading note...</p>;
+  if (isError || !note) return <p>Failed to load note.</p>;
 
   return (
-    <Modal>
-      <h2>{note.title}</h2>
-      <p>{note.content}</p>
+    <Modal onClose={handleClose}>
+      <NotePreview note={note} onClose={handleClose} />
     </Modal>
   );
-};
-
-export default NotePreview;
+}
